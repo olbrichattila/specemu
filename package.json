@@ -1,0 +1,77 @@
+{
+  "name": "zxspecemu",
+  "version": "0.1.0",
+  "main": "src/main.js",
+  "homepage": "https://attilaolbrich.co.uk",
+  "private": false,
+  "scripts": {
+    "start": "cross-env NODE_ENV=development electron .",
+    "start:prod": "cross-env NODE_ENV=production electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "dist:linux": "export GLIBC_VERSION=2.27 && electron-builder --linux",
+    "dist:win": "electron-builder --win",
+    "dist:mac": "electron-builder --mac",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "license": "MIT",
+  "description": "ZX-Spectrum Emulator",
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "electron": "^35.0.2",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.example.zx-emu",
+    "productName": "ZXSpectrumEmulator",
+    "copyright": "Copyright © 2025 Attila Olbrich",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/.bin",
+      "!node_modules/electron*",
+      "!node_modules/@types",
+      "!**/*.map"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "extraFiles": [
+        {
+          "from": "/lib/x86_64-linux-gnu/libpthread.so.0",
+          "to": "libpthread.so.0"
+        }
+      ],
+      "icon": "build/icons",
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "executableName": "zxspecemu",
+      "desktop": {
+        "entry": {
+          "Name": "ZXSpectrumEmulator",
+          "Comment": "ZX Spectrum emulator",
+          "Type": "Application",
+          "Categories": "Utility;Application;"
+        }
+      }
+    },
+    "deb": {
+      "afterInstall": "./postinst.sh"
+    },
+    "asar": true
+  },
+  "author": {
+    "name": "Attila Olbrich",
+    "email": "attila@osoft.hu",
+    "url": "https://attilaolbrich.co.uk"
+  }
+}

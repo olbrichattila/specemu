@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>JSSpeccy v3</title>
+        <script src="jsspeccy/jsspeccy.js"></script>
+        <style>
+            body {
+                background-color: #444;
+            }
+
+            .buttonWrapper {
+                display: block;
+                width: 100%;
+                height: 36px;
+                max-height: 36px;
+                padding: 3px;
+                text-align: center;
+                background-color: #222;
+            }
+
+            #jsspeccy {
+                position: fixed;
+                left: calc(50vw - 320px);
+                top: 60px;
+                width: 640px;
+                margin: auto;
+                background-color: white;
+                z-index: 998;
+            }
+
+            .btn {
+                display: inline-block;
+                background-color: #fc1b9e;
+                border: 1px solid #fc1b9e;
+                border-radius: 3px;
+                color: white;
+                padding: 6px 12px;
+                cursor: pointer;
+                user-select: none;
+            }
+
+            .btn.disabled {
+                background-color: #999;
+                border: 1px solid #999;
+                cursor: not-allowed;
+            }
+
+            .btn:hover {
+                background-color: #ad156e;
+            }
+
+            .btn:hover.disabled {
+                background-color: #999;
+            }
+
+            .dropBtn {
+                position: relative;
+                display: inline-block;
+                background-color: #fc1b9e;
+                border: 1px solid #fc1b9e;
+                border-radius: 3px;
+                color: white;
+                padding: 6px 12px;
+                cursor: pointer;
+                user-select: none;
+
+            }
+            .dropBtn ul {
+                background-color: #444;
+                columns: white;
+                width: 200px;
+                position: absolute;
+                left: 10px;
+                top: 10px;
+                display: none;
+                list-style-type: none;
+                padding-left: 0;
+            }
+
+            .dropBtn ul li {
+                border-bottom: 1px solid #aaa;
+                padding: 6px;
+            }
+        </style>
+    </head>
+<body>
+    <div class="buttonWrapper">
+        <span id="openBtn" class="btn">Open File</span>
+        <span id="zoomInBtn" class="btn">+</span>
+        <span id="zoomOutBtn" class="btn">-</span>
+        <span id="fullScreenBtn" class="btn">Full screen</span>
+        <div id="setMachineBtn" class="dropBtn">
+            Set machine
+            <ul id="machineList">
+                <li onclick="setMachine(event, 48)">48K Spectrum</li>
+                <li onclick="setMachine(event, 128)">128K Spectrum</li>
+                <li onclick="setMachine(event, 5)">Pentagon 128</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="jsspeccy"></div>
+
+    <script src="../src/renderer.js"></script>
+    <script>
+        let currentZoom = 2;
+        const jsSpeccy = document.getElementById("jsspeccy");
+        const openBtn = document.getElementById("openBtn");
+        const zoomInBtn = document.getElementById("zoomInBtn");
+        const zoomOutBtn = document.getElementById("zoomOutBtn");
+        const fullScreenBtn = document.getElementById("fullScreenBtn");
+        const setMachineBtn = document.getElementById("setMachineBtn");
+        const machineList = document.getElementById("machineList");
+
+        const emu = JSSpeccy(jsSpeccy, {zoom: 2, sandbox: false, autoStart: true, uiEnabled: false})
+        emu.onReady(function() {
+            console.log('initialized')
+        })
+        
+        openBtn.addEventListener('click', function() {
+            emu.openFileDialog();
+        });
+
+        openBtn.addEventListener('click', function() {
+            emu.openFileDialog();
+        });
+
+        setMachineBtn.addEventListener('click', function() {
+            if (machineList.style.display === 'block') {
+                jsSpeccy.style.display = 'block';
+                machineList.style.display = 'none';    
+                return
+            }
+
+            jsSpeccy.style.display = 'none';
+            machineList.style.display = 'block';
+        });
+        
+
+        fullScreenBtn.addEventListener('click', function() {
+            emu.enterFullscreen();
+        });
+
+        zoomInBtn.addEventListener('click', function() {
+            if (currentZoom >= 4) {
+                return;
+            }
+            currentZoom++;
+            reSizeWindow(currentZoom);
+            emu.setZoom(currentZoom);
+        });
+
+        zoomOutBtn.addEventListener('click', function() {
+            if (currentZoom <= 1) {
+                return;
+            }
+            currentZoom--;
+            reSizeWindow(currentZoom)
+            emu.setZoom(currentZoom);
+        });
+
+        function reSizeWindow(zoom) {
+            jsSpeccy.style.width = `${zoom * 320}px`;
+            jsSpeccy.style.left = `calc(50vw - ${zoom * 160}px)`;
+            setBtnStatus();
+        }
+
+        function setBtnStatus() {
+            if (currentZoom >= 4) {
+                zoomInBtn.classList.add('disabled')
+                zoomOutBtn.classList.remove('disabled')
+                return;
+            }
+
+            if (currentZoom <= 1) {
+                zoomInBtn.classList.remove('disabled')
+                zoomOutBtn.classList.add('disabled')
+                return;
+            }
+
+            zoomInBtn.classList.remove('disabled')
+            zoomOutBtn.classList.remove('disabled')
+        }
+
+        function setMachine(event, machine) {
+            event.stopPropagation();
+            machineList.style.display = 'none';
+            jsSpeccy.style.display = 'block';
+            emu.setMachine(machine)
+        }
+
+
+        reSizeWindow(currentZoom);
+    </script>
+</body>
+</html>
