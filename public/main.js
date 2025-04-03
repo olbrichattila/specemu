@@ -23,7 +23,7 @@ window.electronAPI.onMessage((event, message) => {
   }
 
   if (message.menu === "open") {
-    emu.openUrl(message.filePath)
+    emu.openUrl(message.filePath);
   }
 
   if (message.menu === "48k") {

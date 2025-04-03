@@ -1,6 +1,5 @@
-const { contextBridge, ipcRenderer } = require('electron')
+const { contextBridge, ipcRenderer } = require("electron");
 
-
-contextBridge.exposeInMainWorld('electronAPI', {
-  onMessage: (callback) => ipcRenderer.on('main-menu', callback)
-})
+contextBridge.exposeInMainWorld("electronAPI", {
+  onMessage: (callback) => ipcRenderer.on("main-menu", callback),
+});
